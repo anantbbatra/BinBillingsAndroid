@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
+
+import java.util.ArrayList;
 
 public class DatabaseManager {
 
@@ -66,6 +69,7 @@ public class DatabaseManager {
     public void clearLoginInfo(){
         db.execSQL("DELETE from " + TABLE_NAME_LOGIN);
     }
+
 
 
 }
