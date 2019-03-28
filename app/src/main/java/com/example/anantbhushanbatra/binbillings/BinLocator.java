@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.nfc.Tag;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class mapping_bins extends AppCompatActivity implements OnMapReadyCallback {
+public class BinLocator extends AppCompatActivity implements OnMapReadyCallback {
 
     Random r = new Random();
     HttpManager httpManager;
@@ -50,12 +53,13 @@ public class mapping_bins extends AppCompatActivity implements OnMapReadyCallbac
     Location mLastLocation;
     LocationRequest mLocationRequest;
     private static final String TAG = "MainActivity";
-
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         getSupportActionBar().setTitle("Bin Billings");
         setContentView(R.layout.activity_mapping_bins);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -65,6 +69,33 @@ public class mapping_bins extends AppCompatActivity implements OnMapReadyCallbac
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         httpManager = new HttpManager();
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        drawerLayout.closeDrawers();
+                        int itemId = menuItem.getItemId();
+
+                        switch (itemId){
+                            case(R.id.settings):
+                                Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                                startActivity(settingsIntent);
+                            case(R.id.recharge):
+                                Intent rechargeIntent = new Intent(getApplicationContext(), RechargeActivity.class);
+                                startActivity(rechargeIntent);
+                            case(R.id.transaction_hist):
+                                Intent transactionHistIntent = new Intent(getApplicationContext(), TransactionHistoryActivity.class);
+                                startActivity(transactionHistIntent);
+                        }
+                        return true;
+                    }
+                });
 
     }
 
