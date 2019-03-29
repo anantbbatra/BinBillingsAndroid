@@ -1,5 +1,6 @@
 package com.example.anantbhushanbatra.binbillings;
 
+import android.content.Intent;
 import android.net.TrafficStats;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -28,11 +30,24 @@ public class TransactionHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_history);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         transactionListView = findViewById(R.id.lister);
 
         httpManager = new HttpManager();
         transactionHistoryHttpQuery = httpManager.getTransactionHistory(1);
+
+        AdapterView.OnItemClickListener listenerForTransactionClick = new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id){
+                Intent openTransaction = new Intent(TransactionHistoryActivity.this, ViewTransaction.class);
+                Transaction chosen = adapter.getItem(position);
+                openTransaction.putExtra("chosen", chosen);
+                startActivity(openTransaction);
+            }
+        };
+
+        transactionListView.setOnItemClickListener(listenerForTransactionClick);
 
         transactionHistoryHttpQuery.enqueue(new Callback<ArrayList<Transaction>>() {
             @Override

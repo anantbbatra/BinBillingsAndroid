@@ -22,9 +22,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ViewTransaction"
+            android:label="@string/title_activity_view_transaction"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".TransactionHistoryActivity"
             android:label="@string/title_activity_transaction_history"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -54,14 +58,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".RatesInfoActivity"
-            android:label="Refuse Rates/Type"/>
-
+        <activity
+            android:name=".RatesInfoActivity"
+            android:label="Refuse Rates/Type" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-
         <activity
             android:name=".RechargeActivity"
             android:label="Recharge Balance" />
