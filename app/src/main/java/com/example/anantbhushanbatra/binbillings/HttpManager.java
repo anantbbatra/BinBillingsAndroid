@@ -46,6 +46,10 @@ public class HttpManager {
     public Call<ArrayList<Bin>> getNearbyBins(Location userLocation){
         Call<ArrayList<Bin>> binCall = apiService.getNearbyBins(userLocation.getLatitude(), userLocation.getLongitude(), 1);
         return binCall;
+    }
 
+    public Call<Provider> getProviderInfo(int provider_id){
+        Call<Provider> providerCall = apiService.getProviderInfo(provider_id);
+        return providerCall;
     }
 }

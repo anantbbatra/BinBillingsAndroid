@@ -87,5 +87,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_mapping_bins">Map</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="title_activity_transaction_history">TransactionHistoryActivity</string>
+    <string name="title_activity_transaction_history">Transaction History Activity</string>
 </resources>

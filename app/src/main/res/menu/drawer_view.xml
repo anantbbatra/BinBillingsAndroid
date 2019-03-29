@@ -5,6 +5,9 @@
             android:id="@+id/bin_locator"
             android:title="Bin locator" />
         <item
+            android:id="@+id/rates"
+            android:title="Rates for Refuse" />
+        <item
             android:id="@+id/recharge"
             android:title="Recharge" />
         <item

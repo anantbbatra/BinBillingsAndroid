@@ -84,14 +84,22 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback 
 
                         switch (itemId){
                             case(R.id.settings):
-                                Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                                Intent settingsIntent = new Intent(BinLocator.this, SettingsActivity.class);
                                 startActivity(settingsIntent);
+                                break;
                             case(R.id.recharge):
                                 Intent rechargeIntent = new Intent(getApplicationContext(), RechargeActivity.class);
                                 startActivity(rechargeIntent);
+                                break;
+                            case(R.id.rates):
+                                Intent ratesIntent = new Intent(getApplicationContext(), RatesInfoActivity.class);
+                                startActivity(ratesIntent);
+                                break;
+
                             case(R.id.transaction_hist):
-                                Intent transactionHistIntent = new Intent(getApplicationContext(), TransactionHistoryActivity.class);
+                                Intent transactionHistIntent = new Intent(BinLocator.this, TransactionHistoryActivity.class);
                                 startActivity(transactionHistIntent);
+                                break;
                         }
                         return true;
                     }

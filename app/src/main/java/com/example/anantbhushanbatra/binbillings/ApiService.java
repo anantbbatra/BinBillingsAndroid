@@ -14,4 +14,7 @@ public interface ApiService {
 
     @GET("/bins")
     Call<ArrayList<Bin>> getNearbyBins(@Query("user_x") double user_x, @Query("user_y") double user_y, @Query("cust_id") int cust_id);
+
+    @GET("/providerInfo")
+    Call<Provider> getProviderInfo(@Query("provider_id") int provider_id);
 }
