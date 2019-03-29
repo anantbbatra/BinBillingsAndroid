@@ -35,7 +35,6 @@ public class HttpManager {
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         apiService = retrofit.create(ApiService.class);
     }
 
@@ -61,5 +60,10 @@ public class HttpManager {
     public Call<RechargeReceipt> recharge(int cust_id, Integer amount){
         Call<RechargeReceipt> rechargeCall = apiService.recharge(cust_id, amount);
         return rechargeCall;
+    }
+
+    public Call<ArrayList<Transaction>> getTransactionHistory(int cust_id){
+        Call<ArrayList<Transaction>> transactionHistoryCall = apiService.getTransactionHistory(cust_id);
+        return transactionHistoryCall;
     }
 }

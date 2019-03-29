@@ -25,4 +25,7 @@ public interface ApiService {
 
     @POST("/recharge")
     Call<RechargeReceipt> recharge(@Query("cust_id") int cust_id, @Query("amount") int amount);
+
+    @GET("/transactions")
+    Call<ArrayList<Transaction>> getTransactionHistory(@Query("cust_id") int cust_id);
 }

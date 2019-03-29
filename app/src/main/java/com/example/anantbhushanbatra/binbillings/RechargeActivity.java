@@ -55,7 +55,6 @@ public class RechargeActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<RechargeReceipt> call, Response<RechargeReceipt> response) {
                         receipt = response.body();
-                        Log.e(TAG, receipt.getAmount().toString());
                         populateViews(receipt.getNewBalance());
                     }
                     @Override
@@ -63,15 +62,16 @@ public class RechargeActivity extends AppCompatActivity {
                         Log.e(TAG, t.getLocalizedMessage());
                     }
                 });
-
-
             }
         });
     }
     public void populateViews(Float accountBalance){
         balance.setText(Float.toString(accountBalance));
-        if (user.getBalance()<5){
+        if (accountBalance<5){
             balance.setBackground(getResources().getDrawable(R.drawable.red_circle));
+        }
+        if (accountBalance>5){
+            balance.setBackground(getResources().getDrawable(R.drawable.green_circle));
         }
     }
 }

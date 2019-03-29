@@ -2,6 +2,7 @@ package com.example.anantbhushanbatra.binbillings;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +28,10 @@ public class RatesInfoActivity extends AppCompatActivity {
         redRateView = (TextView) findViewById(R.id.redRate);
         greenRateView = (TextView) findViewById(R.id.greenRate);
         brownRateView = (TextView) findViewById(R.id.brownRate);
-
+        redRateView.setInputType(InputType.TYPE_NULL);
+        greenRateView.setInputType(InputType.TYPE_NULL);
+        brownRateView.setInputType(InputType.TYPE_NULL);
+        providerNameView.setInputType(InputType.TYPE_NULL);
 
         httpManager = new HttpManager();
 
