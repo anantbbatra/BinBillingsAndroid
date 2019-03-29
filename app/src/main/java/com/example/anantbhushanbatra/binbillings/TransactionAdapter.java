@@ -41,7 +41,7 @@ public class TransactionAdapter extends ArrayAdapter<Transaction> {
 
         weightView.setText((transaction.getWeight().toString())+"kg");
         costView.setText("€"+(transaction.getTotalCost().toString()));
-        dateView.setText(transaction.getTimeOfTransaction().split("T0")[0]);
+        dateView.setText(transaction.getTimeOfTransaction().split("T")[0]);
 
         switch (transaction.getColor()){
             case "green":
