@@ -8,11 +8,11 @@
         android:layout_height="wrap_content"
         android:padding="40dp">
     <TextView
-        android:id="@+id/num_txt"
+        android:id="@+id/balance"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="0dp"
-        android:background="@drawable/balance_circle"
+        android:background="@drawable/green_circle"
         android:gravity="center"
         android:text="30$"
         android:textColor="#FFFFFF"
@@ -40,18 +40,20 @@
             android:orientation="horizontal" >
 
             <EditText
-                android:id="@+id/txtIsbn"
+                android:id="@+id/rechargeAmount"
                 android:layout_width="wrap_content"
+                android:inputType="number"
                 android:layout_height="wrap_content"
                 android:ems="10" />
         </LinearLayout>
+
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="40dp">
         <Button
-            android:id="@+id/btnSubmit"
+            android:id="@+id/rechargeInitiate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="5"

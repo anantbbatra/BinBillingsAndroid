@@ -52,4 +52,14 @@ public class HttpManager {
         Call<Provider> providerCall = apiService.getProviderInfo(provider_id);
         return providerCall;
     }
+
+    public Call<User> getUserInfo(int cust_id){
+        Call<User> providerCall = apiService.getUserInfo(cust_id);
+        return providerCall;
+    }
+
+    public Call<RechargeReceipt> recharge(int cust_id, Integer amount){
+        Call<RechargeReceipt> rechargeCall = apiService.recharge(cust_id, amount);
+        return rechargeCall;
+    }
 }
