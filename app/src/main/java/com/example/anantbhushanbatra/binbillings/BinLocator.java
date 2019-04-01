@@ -1,8 +1,13 @@
 package com.example.anantbhushanbatra.binbillings;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.nfc.Tag;
 import android.support.design.widget.NavigationView;
@@ -14,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,6 +30,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -37,7 +45,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BinLocator extends AppCompatActivity implements OnMapReadyCallback {
+public class BinLocator extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowLongClickListener {
 
     Random r = new Random();
     HttpManager httpManager;
@@ -47,6 +55,8 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback 
     private FusedLocationProviderClient fusedLocationClient;
     private final static int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 1;
     Call<ArrayList<Bin>> binHttpQuery;
+    SharedPreferences.Editor editor;
+    SharedPreferences sharedPref;
 
     GoogleApiClient mGoogleApiClient;
     Marker mLocationMarker;
@@ -59,6 +69,10 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback 
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        sharedPref = this.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
 
         getSupportActionBar().setTitle("Bin Billings");
         setContentView(R.layout.activity_mapping_bins);
@@ -95,7 +109,6 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback 
                                 Intent ratesIntent = new Intent(getApplicationContext(), RatesInfoActivity.class);
                                 startActivity(ratesIntent);
                                 break;
-
                             case(R.id.transaction_hist):
                                 Intent transactionHistIntent = new Intent(BinLocator.this, TransactionHistoryActivity.class);
                                 startActivity(transactionHistIntent);
@@ -104,7 +117,6 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback 
                         return true;
                     }
                 });
-
     }
 
     public void getLastKnownLocation() {
@@ -166,6 +178,7 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         getLastKnownLocation();
+        mMap.setOnInfoWindowLongClickListener(this);
     }
 
     //makes an api call to find nearby bins in a 5 km radius and creates markers on the map
@@ -178,11 +191,17 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback 
                 nearBins = response.body();
                 LatLng temp;
                 String colorLabel;
+                int favouriteBinId = sharedPref.getInt("favourite_bin", 0);
                 for (Bin bin: nearBins) {
                     temp = new LatLng(bin.getXCoordinate(), bin.getYCoordinate());
                     float markerAngle = -90 + r.nextFloat() * (180);
                     colorLabel = bin.getColor().substring(0, 1).toUpperCase() + bin.getColor().substring(1);
-                    mMap.addMarker(new MarkerOptions().position(temp).rotation(markerAngle).title(colorLabel));
+                    if (bin.getBinId()==favouriteBinId){
+                        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_star_black_24dp));
+                        mMap.addMarker(new MarkerOptions().position(temp).rotation(markerAngle).title(Integer.toString(bin.getBinId())).snippet(colorLabel)).setIcon(markerIcon);
+                    }else {
+                        mMap.addMarker(new MarkerOptions().position(temp).rotation(markerAngle).title(Integer.toString(bin.getBinId())).snippet(colorLabel));
+                    }
                 }
             }
             @Override
@@ -191,9 +210,32 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback 
             }
         });
 
-        LatLng user = new LatLng(lastUserLocation.getLatitude(), lastUserLocation.getLongitude());
+        LatLng user = new LatLng(53.337439,-6.267430);
+        //LatLng user = new LatLng(lastUserLocation.getLatitude(), lastUserLocation.getLongitude());
+
         mMap.addMarker(new MarkerOptions().position(user).title("Your Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(user,15));
+
+    }
+
+    @Override
+    public void onInfoWindowLongClick(Marker marker) {
+        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_star_black_24dp));
+        mMap.addMarker(new MarkerOptions().position(marker.getPosition()).icon(markerIcon));
+        editor.putInt("favourite_bin", Integer.parseInt(marker.getTitle()));
+        editor.apply();
+        //marker.remove();
+        Toast.makeText(this, "This bin has been saved as your favourite bin.", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
+        Canvas canvas = new Canvas();
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 }
 

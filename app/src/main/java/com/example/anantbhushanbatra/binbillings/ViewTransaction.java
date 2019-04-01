@@ -5,17 +5,25 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ViewTransaction extends AppCompatActivity {
     TextView transaction_id, bin_id, time_of_transaction, weight, rate, total_cost, color, status, date_of_transaction;
     Button dispute;
+    private final String TAG = "ViewTransactionActivity";
     Transaction chosen;
+    Call<Transaction> disputeCallQuery;
     String formattedTime, formattedDate;
+    HttpManager httpManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +56,34 @@ public class ViewTransaction extends AppCompatActivity {
         total_cost.setText(chosen.getTotalCost().toString());
         color.setText(chosen.getColor());
 
-
         if (chosen.getStatus().equals("conflict")){
-            dispute.setVisibility(View.GONE);
-            status.setText("Our team is looking into this issue.");
+            changeUxForConflict();
         }else{
             status.setText(chosen.getStatus().toUpperCase());
         }
+
+        dispute.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                httpManager = new HttpManager();
+                disputeCallQuery = httpManager.dispute(chosen.getTransactionId());
+                disputeCallQuery.enqueue(new Callback<Transaction>() {
+                    @Override
+                    public void onResponse(Call<Transaction> call, Response<Transaction> response) {
+                        Log.e(TAG,Integer.toString(response.code()));
+                        changeUxForConflict();
+                    }
+                    @Override
+                    public void onFailure(Call<Transaction> call, Throwable t) {
+                        Log.e(TAG, t.getLocalizedMessage());
+                    }
+                });
+            }
+        });
+    }
+
+    public void changeUxForConflict(){
+        dispute.setVisibility(View.GONE);
+        status.setText("Our team is looking into this issue.");
+
     }
 }

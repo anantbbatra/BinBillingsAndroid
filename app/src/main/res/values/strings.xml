@@ -89,4 +89,7 @@
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_transaction_history">Transaction History Activity</string>
     <string name="title_activity_view_transaction">View Transaction</string>
+    <string name="preference_file_key">binBillingsPref</string>
+
+
 </resources>

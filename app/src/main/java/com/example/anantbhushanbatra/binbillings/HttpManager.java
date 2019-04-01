@@ -25,7 +25,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.ContentValues.TAG;
-
+//10.0.2.2
 public class HttpManager {
     private static final String BASE_URL = "http://192.168.0.192:3000" ;
     ApiService apiService;
@@ -65,5 +65,10 @@ public class HttpManager {
     public Call<ArrayList<Transaction>> getTransactionHistory(int cust_id){
         Call<ArrayList<Transaction>> transactionHistoryCall = apiService.getTransactionHistory(cust_id);
         return transactionHistoryCall;
+    }
+
+    public Call<Transaction> dispute(int transaction_id) {
+        Call<Transaction> disputeCall = apiService.dispute(transaction_id);
+        return disputeCall;
     }
 }
