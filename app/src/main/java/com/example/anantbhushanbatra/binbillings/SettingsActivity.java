@@ -8,9 +8,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -24,53 +31,45 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatActivity {
+    HttpManager httpManager;
+    Call<User> balanceHttpQuery;
+    private static final String TAG = "SettingsActivity";
+    TextView name, email;
+    TextView city, apartment_commmunity;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
+        httpManager = new HttpManager();
+        balanceHttpQuery = httpManager.getUserInfo(1);
 
-        //ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-
-        // Add Fragments to adapter one by one
-        //adapter.addFragment(new FragmentOne(), "Profile Settings");
-        //adapter.addFragment(new FragmentTwo(), "Payment Settings");
-
-        //viewPager.setAdapter(adapter);
-
-        //TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        //tabLayout.setupWithViewPager(viewPager);
+        name = findViewById(R.id.name);
+        email = findViewById(R.id.email);
+        city = findViewById(R.id.city);
+        apartment_commmunity =findViewById(R.id.apartment_community);
 
 
+        balanceHttpQuery.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                user = response.body();
+                populateViews();
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e(TAG, t.getLocalizedMessage());
+            }
+        });
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
+    public void populateViews(){
+        name.setText(user.getCustName());
+        //city.setTextAlignment(u);
+        email.setText(user.getCustEmail());
+        Log.e(TAG, user.getCityName());
+        city.setText(user.getCityName());
+        apartment_commmunity.setText(user.getCommunityName());
     }
 }

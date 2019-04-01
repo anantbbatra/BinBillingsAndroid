@@ -22,6 +22,15 @@ public class User {
     @SerializedName("provider_name")
     @Expose
     private String providerName;
+    @SerializedName("apartment_name")
+    @Expose
+    private String communityName;
+    @SerializedName("city_name")
+    @Expose
+    private String cityName;
+    @SerializedName("cust_email")
+    @Expose
+    private String cust_email;
 
     public Integer getCustId() {
         return custId;
@@ -70,5 +79,31 @@ public class User {
     public void setProviderName(String providerName) {
         this.providerName = providerName;
     }
+
+    public String getCustEmail() {
+        return cust_email;
+    }
+
+    public void setCustEmail(String cust_email) {
+        this.cust_email = cust_email;
+    }
+
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
+    }
+
+    public String getCommunityName() {
+        return communityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+
 
 }
