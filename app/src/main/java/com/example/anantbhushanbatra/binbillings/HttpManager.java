@@ -67,8 +67,8 @@ public class HttpManager {
         return transactionHistoryCall;
     }
 
-    public Call<Transaction> dispute(int transaction_id) {
-        Call<Transaction> disputeCall = apiService.dispute(transaction_id);
+    public Call<Transaction> dispute(int transaction_id, String customer_comment) {
+        Call<Transaction> disputeCall = apiService.dispute(transaction_id, customer_comment);
         return disputeCall;
     }
 }

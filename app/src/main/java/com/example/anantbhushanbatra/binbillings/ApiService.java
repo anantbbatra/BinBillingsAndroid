@@ -30,5 +30,5 @@ public interface ApiService {
     Call<ArrayList<Transaction>> getTransactionHistory(@Query("cust_id") int cust_id);
 
     @POST("/dispute")
-    Call<Transaction> dispute(@Query("transaction_id") int transaction_id);
+    Call<Transaction> dispute(@Query("transaction_id") int transaction_id, @Query("comments") String customer_comments);
 }

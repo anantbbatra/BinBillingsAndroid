@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -24,6 +25,8 @@ public class ViewTransaction extends AppCompatActivity {
     Call<Transaction> disputeCallQuery;
     String formattedTime, formattedDate;
     HttpManager httpManager;
+    EditText commentBox;
+    String customer_comment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class ViewTransaction extends AppCompatActivity {
         chosen = (Transaction) getIntent().getSerializableExtra("chosen");
 
         dispute = findViewById(R.id.disputeTransaction);
-
+        commentBox = findViewById(R.id.comment);
         transaction_id = findViewById(R.id.transaction_Id);
         bin_id = findViewById(R.id.bin_id);
         time_of_transaction = findViewById(R.id.time_of_transaction);
@@ -65,7 +68,8 @@ public class ViewTransaction extends AppCompatActivity {
         dispute.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 httpManager = new HttpManager();
-                disputeCallQuery = httpManager.dispute(chosen.getTransactionId());
+                customer_comment = commentBox.getText().toString();
+                disputeCallQuery = httpManager.dispute(chosen.getTransactionId(), customer_comment);
                 disputeCallQuery.enqueue(new Callback<Transaction>() {
                     @Override
                     public void onResponse(Call<Transaction> call, Response<Transaction> response) {
@@ -83,7 +87,7 @@ public class ViewTransaction extends AppCompatActivity {
 
     public void changeUxForConflict(){
         dispute.setVisibility(View.GONE);
+        commentBox.setVisibility(View.GONE);
         status.setText("Our team is looking into this issue.");
-
     }
 }
