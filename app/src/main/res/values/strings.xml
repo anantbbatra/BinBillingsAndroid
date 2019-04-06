@@ -90,6 +90,7 @@
     <string name="title_activity_transaction_history">Transaction History Activity</string>
     <string name="title_activity_view_transaction">View Transaction</string>
     <string name="preference_file_key">binBillingsPref</string>
+    <string name="title_activity_filter_bins">FilterBinsActivity</string>
 
 
 </resources>

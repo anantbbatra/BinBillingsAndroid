@@ -22,9 +22,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".FilterBinsActivity"
+            android:label="@string/title_activity_filter_bins"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".ViewTransaction"
             android:label="@string/title_activity_view_transaction"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TransactionHistoryActivity"
             android:label="@string/title_activity_transaction_history"

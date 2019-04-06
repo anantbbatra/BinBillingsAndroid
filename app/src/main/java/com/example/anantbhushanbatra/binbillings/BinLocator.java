@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.nfc.Tag;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -18,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -64,11 +66,15 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
     LocationRequest mLocationRequest;
     private static final String TAG = "MainActivity";
     private DrawerLayout drawerLayout;
+    boolean green, red, brown;
+    SharedPreferences prefs;
+    Marker favBinMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        favBinMarker = null;
 
         sharedPref = this.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -83,6 +89,11 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         httpManager = new HttpManager();
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        red = prefs.getBoolean("redAllowed", true);
+        green = prefs.getBoolean("greenAllowed", true);
+        brown = prefs.getBoolean("brownAllowed", true);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -193,15 +204,34 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
                 String colorLabel;
                 int favouriteBinId = sharedPref.getInt("favourite_bin", 0);
                 for (Bin bin: nearBins) {
+                    switch (bin.getColor()){
+                        case "green":
+                            if (!green){
+                                continue;
+                            }
+                            break;
+                        case "brown":
+                            if (!brown){
+                                continue;
+                            }
+                            break;
+                        case "red":
+                            if (!red){
+                                continue;
+                            }
+                            break;
+                    }
+
                     temp = new LatLng(bin.getXCoordinate(), bin.getYCoordinate());
                     float markerAngle = -90 + r.nextFloat() * (180);
                     colorLabel = bin.getColor().substring(0, 1).toUpperCase() + bin.getColor().substring(1);
+
                     if (bin.getBinId()==favouriteBinId){
                         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_star_black_24dp));
-                        mMap.addMarker(new MarkerOptions().position(temp).rotation(markerAngle).title(Integer.toString(bin.getBinId())).snippet(colorLabel)).setIcon(markerIcon);
-                    }else {
-                        mMap.addMarker(new MarkerOptions().position(temp).rotation(markerAngle).title(Integer.toString(bin.getBinId())).snippet(colorLabel));
+                        favBinMarker= mMap.addMarker(new MarkerOptions().position(temp).anchor(0.5f,.5f).title(Integer.toString(bin.getBinId())).snippet(colorLabel).icon(markerIcon));
                     }
+                    mMap.addMarker(new MarkerOptions().position(temp).rotation(markerAngle).title(Integer.toString(bin.getBinId())).snippet(colorLabel));
+
                 }
             }
             @Override
@@ -210,7 +240,7 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
             }
         });
 
-        LatLng user = new LatLng(53.337439,-6.267430);
+        LatLng user = new LatLng(53.349037,-6.247613);
         //LatLng user = new LatLng(lastUserLocation.getLatitude(), lastUserLocation.getLongitude());
 
         mMap.addMarker(new MarkerOptions().position(user).title("Your Location"));
@@ -220,10 +250,15 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
 
     @Override
     public void onInfoWindowLongClick(Marker marker) {
+        if (favBinMarker != null){
+            favBinMarker.remove();
+        }
+
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_star_black_24dp));
-        mMap.addMarker(new MarkerOptions().position(marker.getPosition()).icon(markerIcon));
+        favBinMarker = mMap.addMarker(new MarkerOptions().position(marker.getPosition()).icon(markerIcon).anchor((0.5f),0.5f));
         editor.putInt("favourite_bin", Integer.parseInt(marker.getTitle()));
         editor.apply();
+
         //marker.remove();
         Toast.makeText(this, "This bin has been saved as your favourite bin.", Toast.LENGTH_SHORT).show();
 
@@ -236,6 +271,23 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.bin_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.filter_search:
+                Intent filter = new Intent(this, FilterBinsActivity.class);
+                startActivity(filter);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 

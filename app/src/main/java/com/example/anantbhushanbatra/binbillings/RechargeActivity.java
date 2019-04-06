@@ -50,18 +50,23 @@ public class RechargeActivity extends AppCompatActivity {
 
         pay.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                rechargeHttpQuery = httpManager.recharge(1, Integer.parseInt(rechargeAmount.getText().toString()));
-                rechargeHttpQuery.enqueue(new Callback<RechargeReceipt>() {
-                    @Override
-                    public void onResponse(Call<RechargeReceipt> call, Response<RechargeReceipt> response) {
-                        receipt = response.body();
-                        populateViews(receipt.getNewBalance());
-                    }
-                    @Override
-                    public void onFailure(Call<RechargeReceipt> call, Throwable t) {
-                        Log.e(TAG, t.getLocalizedMessage());
-                    }
-                });
+                if (!rechargeAmount.getText().toString().matches("")) {
+                    rechargeHttpQuery = httpManager.recharge(1, Integer.parseInt(rechargeAmount.getText().toString()));
+
+                    rechargeHttpQuery.enqueue(new Callback<RechargeReceipt>() {
+                        @Override
+
+                        public void onResponse(Call<RechargeReceipt> call, Response<RechargeReceipt> response) {
+                            receipt = response.body();
+                            populateViews(receipt.getNewBalance());
+                        }
+
+                        @Override
+                        public void onFailure(Call<RechargeReceipt> call, Throwable t) {
+                            Log.e(TAG, t.getLocalizedMessage());
+                        }
+                    });
+                }
             }
         });
     }
