@@ -1,5 +1,7 @@
 package com.example.anantbhushanbatra.binbillings;
 
+
+
 import android.location.Location;
 import android.util.Log;
 
@@ -26,8 +28,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.ContentValues.TAG;
 //10.0.2.2
+
 public class HttpManager {
-    private static final String BASE_URL = "http://192.168.0.192:3000" ;
+    private static final String BASE_URL = "http://192.168.0.192:3001" ;
     ApiService apiService;
 
     public HttpManager(){
@@ -52,6 +55,7 @@ public class HttpManager {
         return providerCall;
     }
 
+
     public Call<User> getUserInfo(int cust_id){
         Call<User> providerCall = apiService.getUserInfo(cust_id);
         return providerCall;
@@ -70,5 +74,24 @@ public class HttpManager {
     public Call<Transaction> dispute(int transaction_id, String customer_comment) {
         Call<Transaction> disputeCall = apiService.dispute(transaction_id, customer_comment);
         return disputeCall;
+    }
+    public Call<Integer> connectToBin(){
+        Call<Integer> binAvailable = apiService.connectToBin();
+        return binAvailable;
+    }
+
+    public Call<Transaction> getCode(int cust_id, int bin_id){
+        Call<Transaction> startTransaction = apiService.getCode(cust_id, bin_id);
+        return startTransaction;
+    }
+
+    public Call<Float> getWeight(){
+        Call<Float> getWeight = apiService.getWeight();
+        return getWeight;
+    }
+
+    public Call<Transaction> completeTransaction(Integer transaction_id, Float weight){
+        Call<Transaction> completeTransaction = apiService.completeTransaction(transaction_id, weight);
+        return completeTransaction;
     }
 }

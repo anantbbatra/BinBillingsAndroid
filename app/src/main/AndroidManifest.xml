@@ -22,9 +22,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".UnlockScreenActivity"
+            android:label="@string/title_activity_unlock_screen"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".FilterBinsActivity"
             android:label="@string/title_activity_filter_bins"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ViewTransaction"
             android:label="@string/title_activity_view_transaction"
@@ -71,6 +75,9 @@
         <activity
             android:name=".RechargeActivity"
             android:label="Recharge Balance" />
+        <activity
+            android:name=".UnlockBinActivity"
+            android:label="Bin Interface" />
     </application>
 
 </manifest>

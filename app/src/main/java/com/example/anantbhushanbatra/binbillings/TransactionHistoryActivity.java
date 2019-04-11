@@ -54,6 +54,7 @@ public class TransactionHistoryActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<Transaction>> call, Response<ArrayList<Transaction>> response) {
                 transactions = response.body();
                 Log.e(TAG, response.toString());
+                Log.e(TAG,response.message());
                 populateList();
             }
             @Override

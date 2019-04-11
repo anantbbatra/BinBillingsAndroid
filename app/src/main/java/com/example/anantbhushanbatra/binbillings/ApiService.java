@@ -26,8 +26,22 @@ public interface ApiService {
     @POST("/recharge")
     Call<RechargeReceipt> recharge(@Query("cust_id") int cust_id, @Query("amount") int amount);
 
-    @GET("/transactions")
+    @POST("/unlock")
+    Call<Transaction> getCode(@Query("cust_id") int cust_id, @Query("bin_id") int bin_id);
+
+    @GET("/transactionsForAndroid")
     Call<ArrayList<Transaction>> getTransactionHistory(@Query("cust_id") int cust_id);
+
+    @GET("/getStatus")
+    Call<Integer> connectToBin();
+
+    @GET("/getWeight")
+    Call<Float> getWeight();
+
+
+    @POST("/transact")
+    Call<Transaction> completeTransaction(@Query("transaction_id") int transaction_id, @Query("weight") Float weight);
+
 
     @POST("/dispute")
     Call<Transaction> dispute(@Query("transaction_id") int transaction_id, @Query("comments") String customer_comments);

@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.nfc.Tag;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -70,11 +71,21 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
     SharedPreferences prefs;
     Marker favBinMarker;
 
+    private Handler mHandler = new Handler();
+
+    private Runnable myTask = new Runnable() {
+        public void run() {
+//            doMyThing();
+            mHandler.postDelayed(this, 5000); // Running this thread again after 5000 milliseconds        }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         favBinMarker = null;
+        mHandler.postDelayed(myTask, 100);
 
         sharedPref = this.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -130,12 +141,41 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
                 });
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        attemptConnection();
+    }
+
+    public void attemptConnection(){
+        Call<Integer> getBinStatus = httpManager.connectToBin();
+
+        getBinStatus.enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                Integer result = response.body();
+                Log.e(TAG, Integer.toString(response.code()));
+                Log.e(TAG, result.toString());
+
+                if(result>0){
+                    Intent filter = new Intent(BinLocator.this, UnlockBinActivity.class);
+                    filter.putExtra("bin_id", result);
+                    startActivity(filter);
+                }
+            }
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Log.e(TAG, t.getLocalizedMessage());
+            }
+        });
+    };
+
     public void getLastKnownLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
 
         }else {
@@ -147,7 +187,6 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 // Logic to handle location object
-
                                 lastUserLocation = location;
                                 populateMap();
                             }
@@ -170,7 +209,6 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request.
         }
@@ -195,7 +233,6 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
     //makes an api call to find nearby bins in a 5 km radius and creates markers on the map
     public void populateMap(){
         binHttpQuery = httpManager.getNearbyBins(lastUserLocation);
-
         binHttpQuery.enqueue(new Callback<ArrayList<Bin>>() {
             @Override
             public void onResponse(Call<ArrayList<Bin>> call, Response<ArrayList<Bin>> response) {
@@ -221,17 +258,14 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
                             }
                             break;
                     }
-
                     temp = new LatLng(bin.getXCoordinate(), bin.getYCoordinate());
-                    float markerAngle = -90 + r.nextFloat() * (180);
+                    float markerAngle =  + r.nextFloat() * (360);
                     colorLabel = bin.getColor().substring(0, 1).toUpperCase() + bin.getColor().substring(1);
-
                     if (bin.getBinId()==favouriteBinId){
                         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_star_black_24dp));
                         favBinMarker= mMap.addMarker(new MarkerOptions().position(temp).anchor(0.5f,.5f).title(Integer.toString(bin.getBinId())).snippet(colorLabel).icon(markerIcon));
                     }
                     mMap.addMarker(new MarkerOptions().position(temp).rotation(markerAngle).title(Integer.toString(bin.getBinId())).snippet(colorLabel));
-
                 }
             }
             @Override
@@ -239,13 +273,10 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
                 Log.e(TAG, t.getLocalizedMessage());
             }
         });
-
-        LatLng user = new LatLng(53.349037,-6.247613);
-        //LatLng user = new LatLng(lastUserLocation.getLatitude(), lastUserLocation.getLongitude());
-
+        //LatLng user = new LatLng(53.349037,-6.247613);
+        LatLng user = new LatLng(lastUserLocation.getLatitude(), lastUserLocation.getLongitude());
         mMap.addMarker(new MarkerOptions().position(user).title("Your Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(user,15));
-
     }
 
     @Override
@@ -253,15 +284,12 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
         if (favBinMarker != null){
             favBinMarker.remove();
         }
-
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_star_black_24dp));
         favBinMarker = mMap.addMarker(new MarkerOptions().position(marker.getPosition()).icon(markerIcon).anchor((0.5f),0.5f));
         editor.putInt("favourite_bin", Integer.parseInt(marker.getTitle()));
         editor.apply();
-
         //marker.remove();
         Toast.makeText(this, "This bin has been saved as your favourite bin.", Toast.LENGTH_SHORT).show();
-
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -280,7 +308,6 @@ public class BinLocator extends AppCompatActivity implements OnMapReadyCallback,
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.filter_search:
                 Intent filter = new Intent(this, FilterBinsActivity.class);

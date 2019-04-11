@@ -36,6 +36,9 @@ public class Transaction implements Serializable {
     @SerializedName("status")
     @Expose
     private String status;
+    @SerializedName("unlockCode")
+    @Expose
+    private String unlockCode;
 
     public Integer getTransactionId() {
         return transactionId;
@@ -115,6 +118,14 @@ public class Transaction implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getunlockCode() {
+        return unlockCode;
+    }
+
+    public void setunlockCode(String unlockCode) {
+        this.unlockCode = unlockCode;
     }
 
     public Transaction(Integer transactionId, Integer binId, Integer custId, Float weight, Float rate, Float totalCost, String color, Integer providerId, String timeOfTransaction, String status)
