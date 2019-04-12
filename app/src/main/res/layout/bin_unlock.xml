@@ -35,38 +35,4 @@
             android:layout_centerVertical="true"
             android:layout_centerInParent="true"/>
     </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
-        <TextView
-            android:id="@+id/red_open"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/red_circle"
-            android:gravity="center"
-            android:text="5Ekf4E8"
-            android:textColor="#FFFFFF"
-            android:textSize="10dp"
-            android:layout_centerVertical="true"
-            android:layout_centerInParent="true"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
-        <TextView
-            android:id="@+id/brown_open"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/brown_circle"
-            android:gravity="center"
-            android:text="5Ekf4E8"
-            android:textColor="#FFFFFF"
-            android:textSize="10dp"
-            android:layout_centerVertical="true"
-            android:layout_centerInParent="true"/>
-    </RelativeLayout>
 </LinearLayout>

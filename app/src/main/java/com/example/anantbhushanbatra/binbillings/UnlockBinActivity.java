@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,7 +29,9 @@ public class UnlockBinActivity extends AppCompatActivity {
         open_green_btn.setOnClickListener(new EditText.OnClickListener(){
             public void onClick(View v){
                 open_green_btn.setVisibility(View.GONE);
-                //Toast saying: Bin is unlocked. Open, enter trash and close lid.
+                //Toast saying:
+                Toast.makeText(UnlockBinActivity.this, "Bin is unlocked. Open, enter trash and close lid.!",
+                        Toast.LENGTH_LONG).show();
                 unlock();
             }
         });
@@ -45,7 +48,6 @@ public class UnlockBinActivity extends AppCompatActivity {
             public void onResponse(Call<Transaction> call, Response<Transaction> response) {
                 final Transaction transaction = response.body();
 
-
                 Call<Float> getWeight = httpManager.getWeight();
                 getWeight.enqueue(new Callback<Float>() {
                     @Override
@@ -60,8 +62,10 @@ public class UnlockBinActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(Call<Transaction> call, Response<Transaction> response) {
                                 Transaction result = response.body();
-
-
+                                Log.e("here", "now im here");
+                                Intent filter = new Intent(UnlockBinActivity.this, ViewTransaction.class);
+                                filter.putExtra("chosen", result);
+                                startActivity(filter);
                             }
                             @Override
                             public void onFailure(Call<Transaction> call, Throwable t) {

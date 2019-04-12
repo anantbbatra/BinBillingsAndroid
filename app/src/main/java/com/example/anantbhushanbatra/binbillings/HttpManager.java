@@ -30,8 +30,11 @@ import static android.content.ContentValues.TAG;
 //10.0.2.2
 
 public class HttpManager {
-    private static final String BASE_URL = "http://192.168.0.192:3001" ;
+    private static final String BASE_URL = "http://192.168.0.193:3001" ;
+    private static final String BASE_URL_INTERFACE = "http://192.168.0.193:3002" ;
+
     ApiService apiService;
+    ApiService interfaceApiService;
 
     public HttpManager(){
         Retrofit retrofit = new Retrofit.Builder()
@@ -39,6 +42,12 @@ public class HttpManager {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(ApiService.class);
+
+        Retrofit retrofit2 = new Retrofit.Builder()
+                .baseUrl(BASE_URL_INTERFACE)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        interfaceApiService = retrofit2.create(ApiService.class);
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
@@ -76,17 +85,17 @@ public class HttpManager {
         return disputeCall;
     }
     public Call<Integer> connectToBin(){
-        Call<Integer> binAvailable = apiService.connectToBin();
+        Call<Integer> binAvailable = interfaceApiService.connectToBin();
         return binAvailable;
     }
 
     public Call<Transaction> getCode(int cust_id, int bin_id){
-        Call<Transaction> startTransaction = apiService.getCode(cust_id, bin_id);
+        Call<Transaction> startTransaction = interfaceApiService.getCode(cust_id, bin_id);
         return startTransaction;
     }
 
     public Call<Float> getWeight(){
-        Call<Float> getWeight = apiService.getWeight();
+        Call<Float> getWeight = interfaceApiService.getWeight();
         return getWeight;
     }
 
